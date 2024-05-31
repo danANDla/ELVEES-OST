@@ -1,0 +1,29 @@
+#if defined(TARGET_NVCOM02T)
+	#include "nvcom02t.h"
+	#include "libdsp.h"
+#elif defined(TARGET_MCT03P)
+	#include "mct03p.h"
+#elif defined(TARGET_MCT04)
+	#include "mct04.h"
+#elif defined(TARGET_MCT05)
+	#include "mct05.h"
+#elif defined(TARGET_MC30SF6)
+	#include "mc30sf6.h"
+	#include "libdsp.h"
+#elif defined(TARGET_MCOM02)
+	#include "mcom02.h"
+	#include "libdsp.h"
+#elif defined(TARGET_MC0428)
+	#include "mc0428.h"
+#elif defined(TARGET_MC24R)
+	#include "mc24r.h"
+#elif defined(TARGET_MCT06)
+	#include "mct06.h"
+#elif defined(TARGET_MCT07)
+	#include "mct07.h"
+#elif defined(TARGET_MCT08)
+	#include "mct08.h"
+// TARGET_MCB02 must be the last in this file to override swic_base addresses
+#elif defined(TARGET_MCB02)
+	#include "mcb02.h"
+#endif
