@@ -16,12 +16,12 @@
 #include "risc_runtime/ost_node.h"
 #include "risc_runtime/ost_socket.h"
 
-#define PACKET_BUFFER_SIZE 1500
-#define SIZE 100
+#define PACKET_BUFFER_SIZE 1024*16
+#define SIZE 298
 
 int ExitStatus = 3;
 #define TRANSMISSION_RETRY 5
-#define PACKETS_NUMBER 1
+#define PACKETS_NUMBER 2
 
 void FillArray(unsigned char *array, unsigned int len, int first) {
 	unsigned int i;
@@ -120,16 +120,24 @@ int main() {
 	unsigned char src[PACKET_BUFFER_SIZE] __attribute__((aligned(8))) = {
 	  0,
 	};
-	FillArray(src, SIZE, 1);
+	int i = 0;
+	unsigned int offset = 0;
+	for(i = 0;  i < PACKETS_NUMBER; ++i){
+		FillArray(src + offset, SIZE, i);
+		if(SIZE % 8) offset += (8 - SIZE % 8);
+		offset += SIZE;
+	}
 
 	unsigned char dst[PACKET_BUFFER_SIZE] __attribute__((aligned(8))) = {
 	  0,
 	};
-	unsigned int desc[2] __attribute__((aligned(8))) = {
+	unsigned int rx_desc[256] __attribute__((aligned(8))) = {
 	  0,
-	};
-	initial_all();
+	}; // descriptors for 32 packets
+	unsigned short rx_desc_id = 0;
+	unsigned int rx_offset = 0;
 
+	initial_all();
 	debug_printf("---------------------- \n");
 
 	OstNode node0;
@@ -149,19 +157,19 @@ int main() {
 	   return -1;
 	}
 
-	swic_reciver_run(dst, desc);
+	swic_reciver_run(dst, rx_desc);
 
 	rtc_timer_start();
-
-	int i = 0;
+	offset = 0;
 	for(i = 0; i < PACKETS_NUMBER; ++i) {
-		FillArray(src, SIZE, i);
-		if(send_packet(&node0, 1, src, SIZE) != 1) {
+		if(send_packet(&node0, 1, src + offset, SIZE) != 1) {
 			debug_printf("error in send_packet");
 			shutdown(&node0);
 			shutdown(&node1);
 			return -1;
 		}
+		if(SIZE % 8) offset += (8 - SIZE % 8);
+		offset += SIZE;
 	}
 
 	i = 0;
@@ -169,21 +177,26 @@ int main() {
 			node0.ports[0]->queue.interrupt_counter < TRANSMISSION_RETRY) {
 		if(node0.ports[0]->queue.interrupt_counter != i) {
 			debug_printf("Beps\n");
-			i = node0.ports[0]->queue.interrupt_counter + 1;
+			i = node0.ports[0]->queue.interrupt_counter;
 		}
 
-		unsigned int rx_num = swic_reciver_wait(desc);
+		swic_reciver_wait(rx_desc, rx_desc_id);
+		unsigned char rx_num = rx_desc[rx_desc_id * 2 + 1];
+
 		OstSegment arrived;
-		memcpy(&arrived.header, dst, sizeof(OstSegmentHeader));
+		memcpy(&arrived.header, dst + rx_offset, sizeof(OstSegmentHeader));
 		if(arrived.header.payload_length)
 		{
 			uint8_t* payload = (uint8_t*) malloc(arrived.header.payload_length);
-			memcpy(payload, dst + sizeof(OstSegmentHeader), arrived.header.payload_length);
+			memcpy(payload, dst + rx_offset + sizeof(OstSegmentHeader), arrived.header.payload_length);
 			arrived.payload = payload;
 		}
-		unsigned int arrived_sz = desc[0] & 0x3FFFFFF;
+		unsigned int arrived_sz = rx_desc[rx_desc_id * 2 + 0] & 0x3FFFFFF;
+		rx_desc_id += 1;
+		if(arrived_sz % 8 > 0) rx_offset += (8 - arrived_sz % 8);
+		rx_offset += arrived_sz;
 
-		swic_reciver_run(dst, desc);
+
 		if(rx_num == 1) {
 			debug_printf("SWIC[0] received packet, of size = %u\n", arrived_sz);
 			print_header(&arrived.header);
@@ -196,8 +209,8 @@ int main() {
 			event_handler(&node1, PACKET_ARRIVED_FROM_NETWORK);
 		}
 	}
-
 	rtc_timer_stop();
+
 	if (node1.ports[0]->verified_received == PACKETS_NUMBER)
 	{
 		ExitStatus = 0;

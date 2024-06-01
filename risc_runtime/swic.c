@@ -210,7 +210,6 @@ int swic_send_packege(SWIC_SEND index_port, void *src, unsigned int size)
 	DMA_GIGASPWR_COMM_TX_DATA_CSR|=  0x1;
 	DMA_GIGASPWR_COMM_TX_DESC_CSR|= 1;
 
-
 	return 1;
 }
 
@@ -236,29 +235,31 @@ int swic_reciver_run(void * dst, unsigned int *desc)
 
 
 	DMA_GIGASPWR_COMM_RX_DESC_IR = sys_kernel_va_to_pa((unsigned)desc);
+	DMA_GIGASPWR_COMM_RX_DESC_CSR = (0x0020 << 16) | 0x1; // mem area for 256 bytes (32 descriptors); run dma
 	DMA_GIGASPWR_COMM_RX_DATA_IR = sys_kernel_va_to_pa((unsigned)dst);
-	DMA_GIGASPWR_COMM_RX_DESC_CSR = 0x1; //1 DESC RECIVE
+	DMA_GIGASPWR_COMM_RX_DATA_CSR = (0xFFFE << 16) | 0x1;
 
-	DMA_GIGASPWR_COMM_RX_DATA_CSR = (0xFFFE << 16)| 0x1;
 	return 1;
 }
 
-int swic_reciver_wait(unsigned int *desc)
+int swic_reciver_wait(unsigned int *desc, unsigned char desc_to_receive)
 {
 	if (((unsigned)desc % 8)!=0)
 		return -2;  //if descriptor not aligned
 
-	while((DMA_GIGASPWR_COMM_RX_DESC_RUN & 0x1) == 1) //Wait if one desc recive
-		{
-		if ((DMA_GIGASPWR_COMM_RX_DATA_RUN & 0x1) == 0) //If DATA DMA STOP, restart
-			DMA_GIGASPWR_COMM_RX_DATA_CSR = (0xFFFE << 16)| 0x1;
-		}
+//	while((DMA_GIGASPWR_COMM_RX_DESC_RUN & 0x1) == 1) //Wait if one desc recive
+//	{
+//		if ((DMA_GIGASPWR_COMM_RX_DATA_RUN & 0x1) == 0) //If DATA DMA STOP, restart
+//			DMA_GIGASPWR_COMM_RX_DATA_CSR = (0xFFFE << 16)| 0x1;
+//	}
 
-	if ((desc[0] & 0xA0000000) != 0xA0000000)
-	{
-		debug_printf("PACKET END IS NOT EOP! RX_DESCR0: %x \n",desc[0]);
-		return -1;
-	}
+	while(32 - (DMA_GIGASPWR_COMM_RX_DESC_CSR >> 16) == desc_to_receive) ;
+
+	//	if ((desc[0] & 0xA0000000) != 0xA0000000)
+	//	{
+	//		debug_printf("PACKET END IS NOT EOP! RX_DESCR0: %x \n",desc[0]);
+	//		return -1;
+	//	}
 
 	// if ((desc[0] & 0x3FFFFFF)!=size)
 	// {
@@ -266,5 +267,5 @@ int swic_reciver_wait(unsigned int *desc)
 	// 	return -1;
 	// }
 
-	return desc[1];
+	return 1;
 }
