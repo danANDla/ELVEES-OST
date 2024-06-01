@@ -1,10 +1,10 @@
 #ifndef TIMER_FIFO_H
 #define TIMER_FIFO_H
- 
+
 /**
-* @file
-* @brief
-*/
+ * @file
+ * @brief
+ */
 
 #include <inttypes.h>
 #include "risc_interrupt.h"
@@ -17,22 +17,23 @@
  */
 
 /**
-* @ingroup Timer
-* @typedef NanoSeconds
-* @brief Целочисленный беззнаковый тип наносекунды
-*/
+ * @ingroup Timer
+ * @typedef NanoSeconds
+ * @brief Целочисленный беззнаковый тип наносекунды
+ */
 typedef uint32_t micros_t;
 
 /**
-* @ingroup Timer
-* @brief основная частота в кГц
-*/
-static const uint32_t CPU_FREQ = 32768; 
+ * @ingroup Timer
+ * @brief основная частота в кГц
+ */
+static const uint32_t CPU_FREQ = 32768;
 
 static const uint32_t MAX_TIMER_DURATION = 1048560000000;
 static const micros_t TIMER_MIN_STEP = 31;
 
-typedef struct {
+typedef struct
+{
     uint8_t for_packet;
     uint32_t tics;
 } Timer;
@@ -41,7 +42,7 @@ typedef struct {
  * @ingroup Timer
  * @struct HardwareTimer
  * @brief Implementation (elvees 1892VM15F) of hardware timer.
- * 
+ *
  *
  * @var HardwareTimer::ITCR
  * Регистр управления (182F_5000). 5 разрядов.
@@ -55,7 +56,8 @@ typedef struct {
  * @var HardwareTimer::ITSCALE
  * Регистр предделителя (182F_500C). 8 разрядов.
  */
-typedef struct {
+typedef struct
+{
     uint8_t ITCR;
     uint32_t ITPERIOD;
     uint32_t ITCOUNT;
@@ -66,7 +68,7 @@ typedef struct {
  * \ingroup Timer
  * \struct TimerFifo
  * \brief Data structure for helding retransmission timers.
- * 
+ *
  * FIFO oчередь хранящая значение времени через которое должен сработать
  * следующий таймер. При срабатывании прерывания удаляется верхний элемент,
  * новый таймер запускается с значением верхнего элемента очереди. При добавлении
@@ -74,7 +76,7 @@ typedef struct {
  * обращение к состоянию аппаратного таймера, определяется сколько времени прошло
  * с момента запуска таймера (time_passed). Новый таймер добавляется
  * в конец очереди с значением равным t = new_timer - timers_sum - time_passed.
- * 
+ *
  * @note Ожидается что таймеры имеют одинаковую длительность,
  * должно выполняться условие : new_timer > timers_sum - time_passed.
  *
@@ -94,7 +96,8 @@ typedef struct {
  * @var TimerFifo::last_timer
  * Продлжительность таймера (в тиках), который сейчас тикает.
  */
-typedef struct {
+typedef struct
+{
     Timer data[Q_SZ + 1];
     uint8_t head;
     uint8_t tail;
@@ -138,10 +141,10 @@ int8_t cancel_timer(TimerFifo *const queue, uint8_t seq_n);
  */
 void timer_interrupt_handler(int a);
 
-void print_timers(const TimerFifo* const q);
+void print_timers(const TimerFifo *const q);
 int8_t get_number_of_timers(const TimerFifo *const q);
 int8_t queue_empty(const TimerFifo *const q);
 int8_t clean_queue(TimerFifo *const q);
-void init_hw_timer(TimerFifo* main_fi);
+void init_hw_timer(TimerFifo *main_fi);
 
 #endif

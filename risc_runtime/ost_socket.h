@@ -8,7 +8,7 @@
 
 static const micros_t DURATION_RETRANSMISSON = 1000; // 1 secs
 
-//static const uint16_t WINDOW_SZ = 10;
+// static const uint16_t WINDOW_SZ = 10;
 #define WINDOW_SZ 10
 
 enum TransportLayerEvent;
@@ -52,17 +52,17 @@ typedef struct OstSocket
 
     int8_t verified_received;
 
-    void (*application_receive_callback) (uint8_t, uint8_t, OstSegment *);
+    void (*application_receive_callback)(uint8_t, uint8_t, OstSegment *);
 
     SWIC_SEND spw_layer;
 } OstSocket;
 
-int8_t open(OstSocket* const sk, int8_t mode);
-int8_t close(OstSocket* const sk);
+int8_t open(OstSocket *const sk, int8_t mode);
+int8_t close(OstSocket *const sk);
 int8_t send(OstSocket *const sk, const uint8_t *buffer, uint32_t size);
-int8_t receive(OstSocket* const sk, OstSegment* seg);
+int8_t receive(OstSocket *const sk, OstSegment *seg);
 
-int8_t socket_event_handler(OstSocket* const sk, const enum TransportLayerEvent e, OstSegment* seg, uint8_t seq_n);
-int8_t add_to_tx(OstSocket* const sk, const OstSegment* const seg, uint8_t * const seq_n);
+int8_t socket_event_handler(OstSocket *const sk, const enum TransportLayerEvent e, OstSegment *seg, uint8_t seq_n);
+int8_t add_to_tx(OstSocket *const sk, const OstSegment *const seg, uint8_t *const seq_n);
 
 #endif

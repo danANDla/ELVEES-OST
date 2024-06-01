@@ -6,7 +6,7 @@
 #include "timer_fifo.h"
 #include "ost_segment.h"
 
-//static const uint8_t PORTS_NUMBER = 1;
+// static const uint8_t PORTS_NUMBER = 1;
 #define PORTS_NUMBER 1
 
 enum SocketMode;
@@ -26,10 +26,10 @@ typedef enum TransportLayerEvent
 typedef struct OstNode
 {
     uint8_t self_address;
-    void (*rx_cb) (uint8_t, OstSegment *);
-    void (*timeout_cb) (int);
+    void (*rx_cb)(uint8_t, OstSegment *);
+    void (*timeout_cb)(int);
     struct OstSocket *ports[PORTS_NUMBER];
-    OstSegment* that_arrived;
+    OstSegment *that_arrived;
     uint32_t interrupt_counter;
 } OstNode;
 
