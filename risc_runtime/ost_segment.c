@@ -49,13 +49,13 @@ void set_flag(OstSegment *const seg, SegmentFlag flag)
     switch (flag)
     {
     case ACK:
-        seg->header.flags |= 0b00000001;
+        seg->header.flags = 0b00000001;
         break;
     case SYN:
-        seg->header.flags |= 0b00000010;
+        seg->header.flags = 0b00000010;
         break;
     case RST:
-        seg->header.flags |= 0b00000100;
+        seg->header.flags = 0b00000100;
         break;
     default:
         seg->header.flags &= 0b11111000;

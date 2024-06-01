@@ -30,13 +30,14 @@ void shutdown(OstNode *const node) {
 }
 
 int8_t event_handler(OstNode *const node, const TransportLayerEvent e) {
-    // print_event(node, e);
+//    print_event(node, e);
     switch (e)
     {
         case PACKET_ARRIVED_FROM_NETWORK: {
-            if(node->that_arrived)
-                socket_event_handler(&node->ports[0], e, node->that_arrived, 0);
-            free(node->that_arrived);
+            if(node->that_arrived) {
+                socket_event_handler(node->ports[0], e, node->that_arrived, 0);
+                free(node->that_arrived->payload);
+            }
             break;
         }
         case APPLICATION_PACKET_READY: {
@@ -44,7 +45,7 @@ int8_t event_handler(OstNode *const node, const TransportLayerEvent e) {
             fill_segment(&seg, 100, 1);
             uint8_t seg_n;
             if(add_to_tx(&node->ports[0], &seg, &seg_n)) {
-                socket_event_handler(&node->ports[0], e, 0, seg_n);
+                socket_event_handler(node->ports[0], e, 0, seg_n);
             }
             free(seg.payload);
             break;
@@ -133,16 +134,16 @@ void print_event(const OstNode* const node, const TransportLayerEvent e) {
     switch (e)
     {
     case PACKET_ARRIVED_FROM_NETWORK:
-        debug_printf("NODE[%d] event: PACKET_ARRIVED_FROM_NETWORK", node->self_address);
+        debug_printf("NODE[%d] event: PACKET_ARRIVED_FROM_NETWORK\n", node->self_address);
         break;
     case RETRANSMISSION_INTERRUPT:
-        debug_printf("NODE[%d] event: RETRANSMISSION_INTERRUPT", node->self_address);
+        debug_printf("NODE[%d] event: RETRANSMISSION_INTERRUPT\n", node->self_address);
         break;
     case APPLICATION_PACKET_READY:
-        debug_printf("NODE[%d] event: APPLICATION_PACKET_READY", node->self_address);
+        debug_printf("NODE[%d] event: APPLICATION_PACKET_READY\n", node->self_address);
         break;
     default:
-        debug_printf("NODE[%d] event: unk", node->self_address);
+        debug_printf("NODE[%d] event: unk\n", node->self_address);
         break;
     }
 }

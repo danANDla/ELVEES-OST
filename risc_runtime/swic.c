@@ -211,7 +211,6 @@ int swic_send_packege(SWIC_SEND index_port, void *src, unsigned int size)
 	DMA_GIGASPWR_COMM_TX_DESC_CSR|= 1;
 
 
-
 	return 1;
 }
 
@@ -244,7 +243,7 @@ int swic_reciver_run(void * dst, unsigned int *desc)
 	return 1;
 }
 
-int swic_reciver_wait(unsigned int *desc,unsigned int size)
+int swic_reciver_wait(unsigned int *desc)
 {
 	if (((unsigned)desc % 8)!=0)
 		return -2;  //if descriptor not aligned
@@ -261,21 +260,11 @@ int swic_reciver_wait(unsigned int *desc,unsigned int size)
 		return -1;
 	}
 
-	if ((desc[0] & 0x3FFFFFF)!=size)
-	{
-		debug_printf("SIZE! RX_DESCR0: %x \n",desc[0]);
-		return -1;
-	}
+	// if ((desc[0] & 0x3FFFFFF)!=size)
+	// {
+	// 	debug_printf("SIZE! RX_DESCR0: %x \n",desc[0]);
+	// 	return -1;
+	// }
 
 	return desc[1];
 }
-
-
-
-
-
-
-
-
-
-

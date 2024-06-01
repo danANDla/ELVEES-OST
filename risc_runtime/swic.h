@@ -126,6 +126,6 @@ int swic_get_rx_speed(unsigned int index_port);
 void delay (int delay);
 int swic_send_packege(SWIC_SEND index_port, void *src, unsigned int size);
 int swic_reciver_run(void * dst, unsigned int *desc);
-int swic_reciver_wait(unsigned int *desc,unsigned int size);
+int swic_reciver_wait(unsigned int *desc);
 
 #endif

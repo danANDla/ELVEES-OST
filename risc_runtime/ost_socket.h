@@ -50,6 +50,8 @@ typedef struct OstSocket
     int8_t acknowledged[WINDOW_SZ];
     TimerFifo queue;
 
+    int8_t verified_received;
+
     void (*application_receive_callback) (uint8_t, uint8_t, OstSegment *);
 
     SWIC_SEND spw_layer;

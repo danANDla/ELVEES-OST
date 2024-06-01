@@ -47,6 +47,7 @@ int8_t socket_event_handler(OstSocket* const sk, const enum TransportLayerEvent 
 int8_t open(OstSocket *const sk, int8_t mode)
 {
     sk->mode = mode;
+    sk->verified_received = 0;
     if (mode == CONNECTIONLESS)
     {
         sk->state = OPEN;
@@ -101,6 +102,7 @@ int8_t send(OstSocket *const sk, const uint8_t *buffer, uint32_t size)
         }, .payload = buff
     };
     set_flag(&sk->tx_buffer[sk->tx_window_top].header, DTA);
+    memcpy(sk->tx_buffer[sk->tx_window_top].payload, buffer, size);
     int8_t r = send_to_physical(sk, DTA, sk->tx_window_top);
     if(r != 1) return -1;
     sk->tx_window_top = (sk->tx_window_top + 1) % WINDOW_SZ;
@@ -129,20 +131,18 @@ int8_t add_to_tx(OstSocket* const sk, const OstSegment* const seg, uint8_t * con
 }
 
 int8_t segment_arrival_event_socket_handler(OstSocket *const sk, OstSegment *seg)
-{ if (sk->mode == CONNECTIONLESS)
+{
+	if (sk->mode == CONNECTIONLESS)
     {
-        OstSegmentHeader header;
-
-        peek_header(&seg, &header);
-
-        if (is_ack(&header))
+        if (is_ack(&seg->header))
         {
-            if (in_tx_window(sk, get_seq_number(&header)))
+            if (in_tx_window(sk, seg->header.seq_number))
             {
-                if (!sk->acknowledged[get_seq_number(&header)])
+                if (!sk->acknowledged[seg->header.seq_number])
                 {
-                    sk->acknowledged[get_seq_number(&header)] = 1;
-                    cancel_timer(&sk->queue, get_seq_number(&header));
+                    sk->acknowledged[seg->header.seq_number] = 1;
+                    cancel_timer(&sk->queue, seg->header.seq_number);
+                    sk->queue.interrupt_counter = 0;
                     while (sk->acknowledged[sk->tx_window_bottom])
                     {
                         free(sk->tx_buffer[sk->tx_window_bottom].payload);
@@ -153,15 +153,17 @@ int8_t segment_arrival_event_socket_handler(OstSocket *const sk, OstSegment *seg
         }
         else
         {
-            if (in_rx_window(sk, get_seq_number(&header)))
+            if (in_rx_window(sk, get_seq_number(&seg->header)))
             {
-                memcpy(&sk->rx_buffer[header.seq_number], seg, sizeof(OstSegmentHeader) + seg->header.payload_length);
+            	sk->rx_buffer[seg->header.seq_number].payload = (uint8_t*) malloc(seg->header.payload_length);
+                memcpy(sk->rx_buffer[seg->header.seq_number].payload, seg->payload, seg->header.payload_length);
+                sk->rx_buffer[seg->header.seq_number].header = seg->header;
 
                 send_to_application(sk, &sk->rx_buffer[sk->rx_window_bottom]);
                 sk->rx_window_bottom = (sk->rx_window_bottom + 1) % WINDOW_SZ;
                 sk->rx_window_top = (sk->rx_window_top + 1) % WINDOW_SZ;
             }
-            send_to_physical(sk, ACK, get_seq_number(&header));
+            send_to_physical(sk, ACK, seg->header.seq_number);
         }
         return 1;
     }
@@ -199,16 +201,21 @@ int8_t send_to_physical(OstSocket *const sk, const SegmentFlag t, const uint8_t 
             header.seq_number != seq_n ||
             header.source_addr != sk->ost->self_address)
             return -1;
-
         send_spw(sk->spw_layer, &sk->tx_buffer[seq_n]);
-        if (add_new_timer(&sk->queue, seq_n, DURATION_RETRANSMISSON) != 1)
-            return -1;
+//        if (add_new_timer(&sk->queue, seq_n, DURATION_RETRANSMISSON) != 1)
+//            return -1;
     }
     return 1;
 }
 
 void send_spw(SWIC_SEND spw_layer, OstSegment *seg)
 {
+	// unsigned char addr;
+	// if(spw_layer == SWIC0)
+	// 	addr = 0b00000001;
+	// else if(spw_layer == SWIC1)
+	// 	addr = 0b00000010;
+
 	unsigned char src[150] __attribute__((aligned(8))) = {
 		0,
 	};
@@ -217,14 +224,15 @@ void send_spw(SWIC_SEND spw_layer, OstSegment *seg)
 	if(sz > 300) ;
 	else {
 		memcpy(src, &seg->header, sizeof(OstSegmentHeader));
-		memcpy(src + sizeof(OstSegmentHeader), &seg->payload, seg->header.payload_length);
+		memcpy(src + sizeof(OstSegmentHeader), seg->payload, seg->header.payload_length);
 		swic_send_packege(spw_layer, src, sz);
 	}
 }
 
 void send_to_application(OstSocket *const sk, OstSegment *seg)
 {
-    
+	if(VerifyArray(seg->payload, 0, seg->header.payload_length, sk->rx_window_bottom) == 1) sk->verified_received++;
+    free(seg->payload);
 }
 
 int8_t in_tx_window(const OstSocket *const sk, uint8_t seq_n)
@@ -232,7 +240,6 @@ int8_t in_tx_window(const OstSocket *const sk, uint8_t seq_n)
     if(sk->tx_window_bottom > sk->tx_window_top) {
         return seq_n >= sk->tx_window_bottom || seq_n <= sk->tx_window_top;
     }
-
     return seq_n >= sk->tx_window_bottom && seq_n <= sk->tx_window_top;
 }
 
@@ -241,7 +248,6 @@ int8_t in_rx_window(const OstSocket *const sk, uint8_t seq_n)
     if(sk->rx_window_bottom > sk->rx_window_top) {
         return seq_n >= sk->rx_window_bottom || seq_n <= sk->rx_window_top;
     }
-
     return seq_n >= sk->rx_window_bottom && seq_n <= sk->rx_window_top;
 }
 

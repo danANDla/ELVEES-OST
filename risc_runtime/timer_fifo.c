@@ -144,7 +144,6 @@ int8_t cancel_timer(TimerFifo* const q, uint8_t seq_n) {
     return 0;
 }
 
-
 int8_t activate_timer(TimerFifo* const q, const uint32_t tics) {
 	if(q->fifo_id == 0) {
 	  ITSCALE0 = 0;
