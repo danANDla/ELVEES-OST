@@ -4,9 +4,8 @@
 
 #include <stdlib.h>
 
-// #define LOOPBACK_MODE
 #define TRY 100
-#define SWIC_SPEED 100
+#define SWIC_SPEED 300
 
 void fill_segment(OstSegment *seg, unsigned int len, int first);
 int8_t spw_hw_init(OstNode *const node);
@@ -42,7 +41,8 @@ int8_t event_handler(OstNode *const node, const TransportLayerEvent e)
 		if (node->that_arrived)
 		{
 			socket_event_handler(node->ports[0], e, node->that_arrived, 0);
-			free(node->that_arrived->payload);
+			if(node->that_arrived->header.payload_length && node->that_arrived->payload)
+				free(node->that_arrived->payload);
 		}
 		break;
 	}

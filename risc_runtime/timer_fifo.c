@@ -257,3 +257,41 @@ int8_t clean_queue(TimerFifo *const q)
     for (i = 0; i < Q_SZ; ++i)
         q->data[i] = (Timer){.tics = 0, .for_packet = 0};
 }
+
+int rtc_timer_counter = 0;
+void rtc_timer_handler(int a)
+{
+	if ( (WTCSR & 0xfdff) == 2 ){
+		WTCSR |= (1 << 8); 	// start timer
+	}
+	rtc_timer_counter += 1;
+}
+
+void rtc_timer_start()
+{
+	WTCSR &= 0xfeff; 	// disable timer
+	WTCSR |= (1 << 10); 	// switch to itm
+
+	risc_enable_interrupt(RISC_INT_WDT, 0);
+	risc_register_interrupt(rtc_timer_handler, RISC_INT_WDT);
+
+	WTSCALE = 0;
+	WTPERIOD = 0xffffffff;
+	WTCSR |= (1 << 8); 	// start timer
+}
+
+void rtc_timer_print_elapsed()
+{
+//	debug_printf("%u interrupts, %u tics in timer\n", timer_counter, ITCOUNT0);
+//	debug_printf("%u tics processed \n", 0xffffffff - ITCOUNT0);
+	float ms = ((float) (0xffffffff - WTCOUNT) * 1000 + (float) rtc_timer_counter * 0xffffffff) / (float) get_cpu_clock() ;
+	debug_printf("%.2f milliseconds, %u tics, %u interrupts\n", ms, 0xffffffff - WTCOUNT, rtc_timer_counter);
+}
+
+void rtc_timer_stop()
+{
+	WTCSR &= 0xfeff;
+	rtc_timer_print_elapsed();
+	risc_disable_interrupt(RISC_INT_WDT, 0);
+}
+

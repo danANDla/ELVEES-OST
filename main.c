@@ -16,13 +16,8 @@
 #include "risc_runtime/ost_node.h"
 #include "risc_runtime/ost_socket.h"
 
-#define RX_TX_MULTITEST 1
-// TEST CONFIG
-#define SWIC_SPEED 100
-#define TRY 10
-#define PACKET_BUFFER_SIZE 200
+#define PACKET_BUFFER_SIZE 1500
 #define SIZE 100
-#define TEST_LEN 500
 
 int ExitStatus = 3;
 #define TRANSMISSION_RETRY 5
@@ -155,6 +150,9 @@ int main() {
 	}
 
 	swic_reciver_run(dst, desc);
+
+	rtc_timer_start();
+
 	int i = 0;
 	for(i = 0; i < PACKETS_NUMBER; ++i) {
 		FillArray(src, SIZE, i);
@@ -167,7 +165,7 @@ int main() {
 	}
 
 	i = 0;
-	while(node0.ports[0]->tx_window_bottom != PACKETS_NUMBER &&
+	while(	node0.ports[0]->tx_window_bottom != PACKETS_NUMBER &&
 			node0.ports[0]->queue.interrupt_counter < TRANSMISSION_RETRY) {
 		if(node0.ports[0]->queue.interrupt_counter != i) {
 			debug_printf("Beps\n");
@@ -199,6 +197,7 @@ int main() {
 		}
 	}
 
+	rtc_timer_stop();
 	if (node1.ports[0]->verified_received == PACKETS_NUMBER)
 	{
 		ExitStatus = 0;

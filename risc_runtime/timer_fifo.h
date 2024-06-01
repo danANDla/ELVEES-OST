@@ -146,5 +146,7 @@ int8_t get_number_of_timers(const TimerFifo *const q);
 int8_t queue_empty(const TimerFifo *const q);
 int8_t clean_queue(TimerFifo *const q);
 void init_hw_timer(TimerFifo *main_fi);
+void rtc_timer_start();
+void rtc_timer_stop();
 
 #endif
