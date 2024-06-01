@@ -5,7 +5,7 @@
 #include <stdlib.h>
 
 #define TRY 100
-#define SWIC_SPEED 300
+#define SWIC_SPEED 10
 
 void fill_segment(OstSegment *seg, unsigned int len, int first);
 int8_t spw_hw_init(OstNode *const node);

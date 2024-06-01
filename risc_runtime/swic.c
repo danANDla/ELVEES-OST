@@ -198,7 +198,7 @@ int swic_send_packege(SWIC_SEND index_port, void *src, unsigned int size)
 	else
 		wsize = size/8;
 
-	desc_tx[0] = 0xA0000000|(size & 0x3FFFFFF);
+	desc_tx[0] = 0xA0000000 | (size & 0x3FFFFFF);
 	desc_tx[1] = index_port & 0x7F;
 
 	DMA_GIGASPWR_COMM_TX_DESC_IR = sys_kernel_va_to_pa((unsigned)desc_tx);

@@ -1,0 +1,429 @@
+---------------------- (4*64kb, без Verify)
+
+TRY SPEED_SET: 300 
+
+OST 0 RX_SPEED: 12c 
+
+OST 1 RX_SPEED: 12c 
+
+TRY SPEED_SET: 300 
+
+OST 0 RX_SPEED: 12c 
+
+OST 1 RX_SPEED: 12c 
+
+opened socket [0:0] to 1
+
+opened socket [1:0] to 0
+
+SWIC[1] received packet, of size = 65541
+
+flags: 0, seq_n: 0, length: 65535 bytes, src_addr: 0
+
+SWIC[1] received packet, of size = 65541
+
+flags: 0, seq_n: 1, length: 65535 bytes, src_addr: 0
+
+SWIC[1] received packet, of size = 65541
+
+flags: 0, seq_n: 2, length: 65535 bytes, src_addr: 0
+
+SWIC[1] received packet, of size = 65541
+
+flags: 0, seq_n: 3, length: 65535 bytes, src_addr: 0
+
+SWIC[0] received packet, of size = 6
+
+flags: 1, seq_n: 0, length: 0 bytes, src_addr: 1
+
+SWIC[0] received packet, of size = 6
+
+flags: 1, seq_n: 1, length: 0 bytes, src_addr: 1
+
+SWIC[0] received packet, of size = 6
+
+flags: 1, seq_n: 2, length: 0 bytes, src_addr: 1
+
+SWIC[0] received packet, of size = 6
+
+flags: 1, seq_n: 3, length: 0 bytes, src_addr: 1
+
+645.33 milliseconds, 77439296 tics, 0 interrupts
+
+success
+
+---------------------- (4*64kb, with Verify)
+
+TRY SPEED_SET: 300 
+
+OST 0 RX_SPEED: 12c 
+
+OST 1 RX_SPEED: 12c 
+
+TRY SPEED_SET: 300 
+
+OST 0 RX_SPEED: 12c 
+
+OST 1 RX_SPEED: 12c 
+
+opened socket [0:0] to 1
+
+opened socket [1:0] to 0
+
+SWIC[1] received packet, of size = 65541
+
+flags: 0, seq_n: 0, length: 65535 bytes, src_addr: 0
+
+SWIC[1] received packet, of size = 65541
+
+flags: 0, seq_n: 1, length: 65535 bytes, src_addr: 0
+
+SWIC[1] received packet, of size = 65541
+
+flags: 0, seq_n: 2, length: 65535 bytes, src_addr: 0
+
+SWIC[1] received packet, of size = 65541
+
+flags: 0, seq_n: 3, length: 65535 bytes, src_addr: 0
+
+SWIC[0] received packet, of size = 6
+
+flags: 1, seq_n: 0, length: 0 bytes, src_addr: 1
+
+SWIC[0] received packet, of size = 6
+
+flags: 1, seq_n: 1, length: 0 bytes, src_addr: 1
+
+SWIC[0] received packet, of size = 6
+
+flags: 1, seq_n: 2, length: 0 bytes, src_addr: 1
+
+SWIC[0] received packet, of size = 6
+
+flags: 1, seq_n: 3, length: 0 bytes, src_addr: 1
+
+878.91 milliseconds, 105469703 tics, 0 interrupts
+
+fail, only 1 packets verified by node1 and 4 packets acknowledged by node0
+
+----------------------  (4*64kb, without Verify and with router)
+
+TRY SPEED_SET: 300 
+
+OST 0 RX_SPEED: a 
+
+OST 1 RX_SPEED: 9 
+
+TRY SPEED_SET: 300 
+
+OST 0 RX_SPEED: 9 
+
+OST 1 RX_SPEED: a 
+
+opened socket [0:0] to 1
+
+opened socket [1:0] to 0
+
+SWIC[1] received packet, of size = 65541
+
+flags: 0, seq_n: 0, length: 65535 bytes, src_addr: 0
+
+SWIC[1] received packet, of size = 65541
+
+flags: 0, seq_n: 1, length: 65535 bytes, src_addr: 0
+
+SWIC[1] received packet, of size = 65541
+
+flags: 0, seq_n: 2, length: 65535 bytes, src_addr: 0
+
+SWIC[1] received packet, of size = 65541
+
+flags: 0, seq_n: 3, length: 65535 bytes, src_addr: 0
+
+SWIC[0] received packet, of size = 6
+
+flags: 1, seq_n: 0, length: 0 bytes, src_addr: 1
+
+SWIC[0] received packet, of size = 6
+
+flags: 1, seq_n: 1, length: 0 bytes, src_addr: 1
+
+SWIC[0] received packet, of size = 6
+
+flags: 1, seq_n: 2, length: 0 bytes, src_addr: 1
+
+SWIC[0] received packet, of size = 6
+
+flags: 1, seq_n: 3, length: 0 bytes, src_addr: 1
+
+640.42 milliseconds, 76850200 tics, 0 interrupts
+
+success
+
+
+----------------------  (4*64kb, with Verify and router)
+
+TRY SPEED_SET: 300 
+
+OST 0 RX_SPEED: 9 
+
+OST 1 RX_SPEED: 9 
+
+TRY SPEED_SET: 300 
+
+OST 0 RX_SPEED: a 
+
+OST 1 RX_SPEED: a 
+
+opened socket [0:0] to 1
+
+opened socket [1:0] to 0
+
+SWIC[1] received packet, of size = 65541
+
+flags: 0, seq_n: 0, length: 65535 bytes, src_addr: 0
+
+SWIC[1] received packet, of size = 65541
+
+flags: 0, seq_n: 1, length: 65535 bytes, src_addr: 0
+
+SWIC[1] received packet, of size = 65541
+
+flags: 0, seq_n: 2, length: 65535 bytes, src_addr: 0
+
+SWIC[1] received packet, of size = 65541
+
+flags: 0, seq_n: 3, length: 65535 bytes, src_addr: 0
+
+SWIC[0] received packet, of size = 6
+
+flags: 1, seq_n: 0, length: 0 bytes, src_addr: 1
+
+SWIC[0] received packet, of size = 6
+
+flags: 1, seq_n: 1, length: 0 bytes, src_addr: 1
+
+SWIC[0] received packet, of size = 6
+
+flags: 1, seq_n: 2, length: 0 bytes, src_addr: 1
+
+SWIC[0] received packet, of size = 6
+
+flags: 1, seq_n: 3, length: 0 bytes, src_addr: 1
+
+892.61 milliseconds, 107113227 tics, 0 interrupts
+
+fail, only 0 packets verified by node1 and 4 packets acknowledged by node0
+
+---------------------- (without Verify, 10Mbit/s)
+
+TRY SPEED_SET: 10 
+
+OST 0 RX_SPEED: a 
+
+OST 1 RX_SPEED: a 
+
+TRY SPEED_SET: 10 
+
+OST 0 RX_SPEED: a 
+
+OST 1 RX_SPEED: a 
+
+opened socket [0:0] to 1
+
+opened socket [1:0] to 0
+
+SWIC[1] received packet, of size = 65541
+
+flags: 0, seq_n: 0, length: 65535 bytes, src_addr: 0
+
+SWIC[1] received packet, of size = 65541
+
+flags: 0, seq_n: 1, length: 65535 bytes, src_addr: 0
+
+SWIC[1] received packet, of size = 65541
+
+flags: 0, seq_n: 2, length: 65535 bytes, src_addr: 0
+
+SWIC[1] received packet, of size = 65541
+
+flags: 0, seq_n: 3, length: 65535 bytes, src_addr: 0
+
+SWIC[0] received packet, of size = 6
+
+flags: 1, seq_n: 0, length: 0 bytes, src_addr: 1
+
+SWIC[0] received packet, of size = 6
+
+flags: 1, seq_n: 1, length: 0 bytes, src_addr: 1
+
+SWIC[0] received packet, of size = 6
+
+flags: 1, seq_n: 2, length: 0 bytes, src_addr: 1
+
+SWIC[0] received packet, of size = 6
+
+flags: 1, seq_n: 3, length: 0 bytes, src_addr: 1
+
+640.73 milliseconds, 76887082 tics, 0 interrupts
+
+success
+
+---------------------- (with Verify, 10Mbit/s)
+
+TRY SPEED_SET: 10 
+
+OST 0 RX_SPEED: a 
+
+OST 1 RX_SPEED: a 
+
+TRY SPEED_SET: 10 
+
+OST 0 RX_SPEED: a 
+
+OST 1 RX_SPEED: a 
+
+opened socket [0:0] to 1
+
+opened socket [1:0] to 0
+
+SWIC[1] received packet, of size = 65541
+
+flags: 0, seq_n: 0, length: 65535 bytes, src_addr: 0
+
+SWIC[1] received packet, of size = 65541
+
+flags: 0, seq_n: 1, length: 65535 bytes, src_addr: 0
+
+SWIC[1] received packet, of size = 65541
+
+flags: 0, seq_n: 2, length: 65535 bytes, src_addr: 0
+
+SWIC[1] received packet, of size = 65541
+
+flags: 0, seq_n: 3, length: 65535 bytes, src_addr: 0
+
+SWIC[0] received packet, of size = 6
+
+flags: 1, seq_n: 0, length: 0 bytes, src_addr: 1
+
+SWIC[0] received packet, of size = 6
+
+flags: 1, seq_n: 1, length: 0 bytes, src_addr: 1
+
+SWIC[0] received packet, of size = 6
+
+flags: 1, seq_n: 2, length: 0 bytes, src_addr: 1
+
+SWIC[0] received packet, of size = 6
+
+flags: 1, seq_n: 3, length: 0 bytes, src_addr: 1
+
+893.18 milliseconds, 107182191 tics, 0 interrupts
+
+fail, only 0 packets verified by node1 and 4 packets acknowledged by node0
+
+
+---------------------- 
+
+---------------------- 
+
+Welcome to MC30SF6 & MCK-02REM-3U test SWIC
+
+SWIC 0 RX_SPEED: 9 
+
+SWIC 1 RX_SPEED: a 
+
+---------------------- 
+
+TIME TEST START! MESSAGE_LEN 32768 bytes
+
+SWIC0 -> router -> SWIC1
+
+34.17 milliseconds (4101497 cpu tics)
+
+SWIC0 <- router <- SWIC1
+
+299.09 milliseconds (35891544 cpu tics)
+
+OK!
+
+---------------------- 
+
+---------------------- 
+
+---------------------- 
+
+Welcome to MC30SF6 & MCK-02REM-3U test SWIC
+
+SWIC 0 RX_SPEED: 9 
+
+SWIC 1 RX_SPEED: a 
+
+---------------------- 
+
+TIME TEST START! MESSAGE_LEN 65536 bytes
+
+SWIC0 -> router -> SWIC1
+
+68.31 milliseconds (8198125 cpu tics)
+
+SWIC0 <- router <- SWIC1
+
+506.05 milliseconds (60727069 cpu tics)
+
+OK!
+
+----------------------
+
+---------------------- 
+
+---------------------- 
+
+Welcome to MC30SF6 & MCK-02REM-3U test SWIC
+
+SWIC 0 RX_SPEED: 12c 
+
+SWIC 1 RX_SPEED: 12c 
+
+---------------------- 
+
+TIME TEST START! MESSAGE_LEN 65536 bytes
+
+SWIC0 -> SWIC1
+
+2.46 milliseconds (295489 cpu tics)
+
+SWIC0 <- SWIC1
+
+440.19 milliseconds (52823477 cpu tics)
+
+OK!
+
+---------------------- 
+
+---------------------- 
+
+---------------------- 
+
+Welcome to MC30SF6 & MCK-02REM-3U test SWIC
+
+SWIC 0 RX_SPEED: a 
+
+SWIC 1 RX_SPEED: a 
+
+---------------------- 
+
+TIME TEST START! MESSAGE_LEN 65536 bytes
+
+SWIC0 -> SWIC1
+
+65.58 milliseconds (7870608 cpu tics)
+
+SWIC0 <- SWIC1
+
+503.31 milliseconds (60398065 cpu tics)
+
+OK!
+
+----------------------

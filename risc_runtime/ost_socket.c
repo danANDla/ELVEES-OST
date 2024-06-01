@@ -206,28 +206,32 @@ int8_t send_to_physical(OstSocket *const sk, const SegmentFlag t, const uint8_t 
             header.source_addr != sk->ost->self_address)
             return -1;
         send_spw(sk->spw_layer, &sk->tx_buffer[seq_n]);
-		if (add_new_timer(&sk->queue, seq_n, DURATION_RETRANSMISSON) != 1)
-			return -1;
+//		if (add_new_timer(&sk->queue, seq_n, DURATION_RETRANSMISSON) != 1)
+//			return -1;
     }
     return 1;
 }
 
 void send_spw(SWIC_SEND spw_layer, OstSegment *seg)
 {
-    // unsigned char addr;
-    // if(spw_layer == SWIC0)
-    // 	addr = 0b00000001;
-    // else if(spw_layer == SWIC1)
-    // 	addr = 0b00000010;
+	unsigned char addr_sz = 0;
+
+//	unsigned char addr;
+//	addr_sz = 1;
+//	if(spw_layer == SWIC0)
+//		addr = 0b00000001;
+//	else if(spw_layer == SWIC1)
+//		addr = 0b00000010;
 
     unsigned char src[64*1024 + 6] __attribute__((aligned(8))) = {
         0,
     };
     unsigned int sz = sizeof(OstSegmentHeader) + seg->header.payload_length;
     int i = 0;
-	memcpy(src, &seg->header, sizeof(OstSegmentHeader));
-	memcpy(src + sizeof(OstSegmentHeader), seg->payload, seg->header.payload_length);
-	swic_send_packege(spw_layer, src, sz);
+	memcpy(src + addr_sz, &seg->header, sizeof(OstSegmentHeader));
+	memcpy(src + addr_sz + sizeof(OstSegmentHeader), seg->payload, seg->header.payload_length);
+//	src[0] = addr;
+	swic_send_packege(spw_layer, src, sz + addr_sz);
 }
 
 void send_to_application(OstSocket *const sk, OstSegment *seg)

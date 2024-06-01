@@ -2,8 +2,8 @@
 <MCProject>
   <ProjectProperty id="MultiCoreProject.LinkScriptGen" value="true"/>
   <ProjectProperty id="MultiCoreProject.EntryPoint" value="_start"/>
-  <ProjectProperty id="MultiCoreProject.HeapSize" value="0x141E00"/>
-  <ProjectProperty id="MultiCoreProject.StackSize" value="0x40000"/>
+  <ProjectProperty id="MultiCoreProject.HeapSize" value="0xA00000"/>
+  <ProjectProperty id="MultiCoreProject.StackSize" value="0xA00000"/>
   <ProjectProperty id="MultiCoreProject.Align" value="8"/>
   <ProjectProperty id="MultiCoreProject.Template" value="newlib_template_MC_30SF6"/>
   <ProjectLayout>

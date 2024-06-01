@@ -16,12 +16,13 @@
 #include "risc_runtime/ost_node.h"
 #include "risc_runtime/ost_socket.h"
 
-#define PACKET_BUFFER_SIZE 1024*16
-#define SIZE 298
+#define PACKET_BUFFER_SIZE 1024*1024*4
+#define SIZE 1024*64-1
+#define PACKETS_NUMBER 4
 
 int ExitStatus = 3;
 #define TRANSMISSION_RETRY 5
-#define PACKETS_NUMBER 2
+
 
 void FillArray(unsigned char *array, unsigned int len, int first) {
 	unsigned int i;
@@ -31,6 +32,7 @@ void FillArray(unsigned char *array, unsigned int len, int first) {
 }
 
 int VerifyArray(unsigned char *array, unsigned int offset, unsigned int len, int first) {
+//	return 1;
 	unsigned int i;
 	for (i = 0; i < len; i++) { // it is called configuration port in doc // it is called configuration port in doc // it is called configuration port in doc // it is called configuration port in doc
 		if (array[i] != ((i + first + offset) % 256))
@@ -193,8 +195,15 @@ int main() {
 		}
 		unsigned int arrived_sz = rx_desc[rx_desc_id * 2 + 0] & 0x3FFFFFF;
 		rx_desc_id += 1;
-		if(arrived_sz % 8 > 0) rx_offset += (8 - arrived_sz % 8);
-		rx_offset += arrived_sz;
+		if(rx_desc_id == 100) {
+			swic_reciver_run(dst, rx_desc);
+			rx_desc_id = 0;
+			rx_offset = 0;
+		} else {
+			if(arrived_sz % 8 > 0) rx_offset += (8 - arrived_sz % 8);
+			rx_offset += arrived_sz;
+		}
+
 
 
 		if(rx_num == 1) {
@@ -211,7 +220,7 @@ int main() {
 	}
 	rtc_timer_stop();
 
-	if (node1.ports[0]->verified_received == PACKETS_NUMBER)
+	if (node1.ports[0]->verified_received == PACKETS_NUMBER && node0.ports[0]->tx_window_bottom == PACKETS_NUMBER)
 	{
 		ExitStatus = 0;
 		debug_printf("success\n");
@@ -219,7 +228,7 @@ int main() {
 	else
 	{
 		ExitStatus=1;
-		debug_printf("fail\n");
+		debug_printf("fail, only %u packets verified by node1 and %u packets acknowledged by node0\n", node1.ports[0]->verified_received, node0.ports[0]->tx_window_bottom);
 	}
 
 	return ExitStatus;
