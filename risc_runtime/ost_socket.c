@@ -78,6 +78,7 @@ int8_t close(OstSocket *const sk)
     sk->rx_window_top = 0;
     sk->to_retr = 0;
     sk->self_address = -1;
+    return 1;
 }
 
 int8_t send(OstSocket *const sk, const uint8_t *buffer, uint32_t size)

@@ -18,8 +18,8 @@
 
 /**
  * @ingroup Timer
- * @typedef NanoSeconds
- * @brief Целочисленный беззнаковый тип наносекунды
+ * @typedef micros_t
+ * @brief Целочисленный беззнаковый тип микросекунд.
  */
 typedef uint32_t micros_t;
 
@@ -32,6 +32,18 @@ static const uint32_t CPU_FREQ = 32768;
 static const uint32_t MAX_TIMER_DURATION = 1048560000000;
 static const micros_t TIMER_MIN_STEP = 31;
 
+/**
+ * @ingroup Timer
+ * @struct Timer
+ * @brief Представление таймера в очерди.
+ *
+ * @var Timer::for_packet
+ * Номер пакета для которого запущен таймер
+ *
+ * @var Timer::for_packet
+ * Продолжительность в тиках, на которую должен быть запущен аппаратный таймер, когда данный таймер
+ * окажется в начачле очереди.
+ */
 typedef struct
 {
     uint8_t for_packet;
@@ -42,7 +54,6 @@ typedef struct
  * @ingroup Timer
  * @struct HardwareTimer
  * @brief Implementation (elvees 1892VM15F) of hardware timer.
- *
  *
  * @var HardwareTimer::ITCR
  * Регистр управления (182F_5000). 5 разрядов.
@@ -106,7 +117,6 @@ typedef struct
     Timer data[Q_SZ + 1];
     uint8_t head;
     uint8_t tail;
-    uint8_t window_sz;
     uint32_t timers_sum;
     uint32_t last_timer;
     uint32_t interrupt_counter;
@@ -115,7 +125,8 @@ typedef struct
 } TimerFifo;
 
 /**
- * @relates TimerFifo * @fn add_new_timer(TimerFifo *const queue, uint8_t seq_n, const micrios_t to_wait)
+ * @relates TimerFifo 
+ * @fn add_new_timer(TimerFifo *const queue, uint8_t seq_n, const micrios_t duration)
  * @brief Добавить таймер в очередь.
  * @param queue очерeдь таймеров.
  * @param seq_n номер пакета, к которому относится таймер.
@@ -138,6 +149,10 @@ int8_t cancel_timer(TimerFifo *const queue, const uint8_t seq_n);
  * @relates TimerFifo
  * @fn timer_interrupt_handler(int a)
  * @brief Обработчик прерывания аппаратного таймера.
+ * @param a
+ * 
+ * Сигнатура функции согласно документации процессора. В имплементации для 1892ВМ15АФ 
+ * функция помещена в main.c.
  */
 void timer_interrupt_handler(int a);
 
@@ -178,7 +193,7 @@ void print_timers(const TimerFifo *const q);
 /**
  * @relates TimerFifo
  * @fn rtc_timer_start()
- * @brief Начать измерение времени
+ * @brief Начать измерение времени.
  * Для измерения используется аппаратный watchdog таймер в режиме интервального таймера.
  */
 void rtc_timer_start();
@@ -186,7 +201,7 @@ void rtc_timer_start();
 /**
  * @relates TimerFifo
  * @fn rtc_timer_start()
- * @brief Остановить измерение времени
+ * @brief Остановить измерение времени.
  * Через UART выводится время прошедшее с момента старта в милиисекндах и тактах процессора.
  */
 void rtc_timer_stop();

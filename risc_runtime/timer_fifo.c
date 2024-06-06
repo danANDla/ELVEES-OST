@@ -176,6 +176,11 @@ int8_t cancel_timer(TimerFifo *const q, const uint8_t seq_n)
     return 1;
 }
 
+void timer_interrupt_handler(int a)
+{
+
+}
+
 int8_t activate_timer(TimerFifo *const q, const uint32_t tics)
 {
     if (q->fifo_id == 0)

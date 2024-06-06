@@ -11,10 +11,9 @@ void fill_segment(OstSegment *seg, unsigned int len, int first);
 int8_t spw_hw_init(OstNode *const node);
 void print_event(const OstNode *const node, const TransportLayerEvent e);
 
-int8_t start(OstNode *const node, const enum SocketMode socket_mode, uint8_t hw_timer_id)
+int8_t start(OstNode *const node, uint8_t hw_timer_id)
 {
 	node->ports[0] = malloc(sizeof(OstSocket));
-	node->ports[0]->queue.timeout_cb = node->timeout_cb;
 	node->ports[0]->queue.fifo_id = hw_timer_id;
 	return spw_hw_init(node);
 }
@@ -82,20 +81,17 @@ int8_t send_packet(OstNode *const node, int8_t address, const uint8_t *buffer, u
 	return send(node->ports[0], buffer, size);
 }
 
-int8_t receive_packet(OstNode *const node, const uint8_t *buffer, uint32_t *received_sz);
-
 int8_t open_connection(OstNode *const node, uint8_t address, int8_t mode)
 {
 	node->ports[0]->self_port = 0;
 	node->ports[0]->to_address = address;
-	open(node->ports[0], mode);
+	return open(node->ports[0], mode);
 }
 
 int8_t close_connection(OstNode *const node, uint8_t address)
 {
-	close(node->ports[0]);
+	return close(node->ports[0]);
 }
-int8_t get_socket(OstNode *const node, uint8_t address, OstSocket *const socket);
 
 int8_t spw_hw_init(OstNode *const node)
 {
