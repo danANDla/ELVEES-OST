@@ -79,7 +79,7 @@ int8_t push_timer(TimerFifo *const q, const uint8_t seq_n, const uint32_t durati
     }
     uint32_t r = q->data[q->head].tics;
     move_head(q);
-    return 0;
+    return 1;
 }
 
 int8_t pop_timer(TimerFifo *const q, const uint8_t seq_n, uint32_t *const duration_to_set)
@@ -135,7 +135,7 @@ int8_t pop_timer(TimerFifo *const q, const uint8_t seq_n, uint32_t *const durati
             q->data[t_id].tics += r;
         }
     }
-    return 0;
+    return 1;
 }
 
 uint32_t tics_from_micros(const micros_t ms)
@@ -156,9 +156,9 @@ int8_t add_new_timer(TimerFifo *const q, uint8_t seq_n, const micros_t duration)
     return 1;
 }
 
-int8_t cancel_timer(TimerFifo *const q, uint8_t seq_n)
+int8_t cancel_timer(TimerFifo *const q, const uint8_t seq_n)
 {
-    int8_t was_in_hw = seq_n == q->data[q->tail].tics; // if is timer that was on hw, remove from hw first
+    int8_t was_in_hw = seq_n == q->data[q->tail].tics;
     uint32_t to_set;
     int8_t r = pop_timer(q, seq_n, &to_set);
     if (r != 0)
@@ -170,10 +170,10 @@ int8_t cancel_timer(TimerFifo *const q, uint8_t seq_n)
     }
     if (to_set != 0)
     {
-        activate_timer(q, to_set);
+        return activate_timer(q, to_set);
     }
 
-    return 0;
+    return 1;
 }
 
 int8_t activate_timer(TimerFifo *const q, const uint32_t tics)
@@ -219,7 +219,7 @@ void print_timers(const TimerFifo *const q)
     //	debug_printf("%d timers\n", get_number_of_timers(q));
 
     int i;
-    for (i = 0; i < 10; ++i)
+    for (i = 0; i < Q_SZ; ++i)
     {
         if (i == q->tail && i == q->head)
             debug_printf("[]");
