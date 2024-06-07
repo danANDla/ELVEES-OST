@@ -244,11 +244,10 @@ void send_to_application(OstSocket *const sk, OstSegment *seg)
 
 int8_t in_tx_window(const OstSocket *const sk, uint8_t seq_n)
 {
-    if (sk->tx_window_bottom > sk->tx_window_top)
-    {
-        return seq_n >= sk->tx_window_bottom || seq_n <= sk->tx_window_top;
-    }
-    return seq_n >= sk->tx_window_bottom && seq_n <= sk->tx_window_top;
+    return (sk->tx_window_top >= sk->tx_window_bottom && seq_n >= sk->tx_window_bottom &&
+            seq_n < sk->tx_window_top) ||
+           (sk->tx_window_bottom > sk->tx_window_top &&
+            (seq_n >= sk->tx_window_bottom || seq_n < sk->tx_window_top));
 }
 
 int8_t in_rx_window(const OstSocket *const sk, uint8_t seq_n)
